@@ -3,12 +3,11 @@ package xyz.eginez.andes;
 import java.util.Optional;
 
 public interface Operation {
-  String getName();
+    String getName();
 
-  int getArgsLen();
+    int getArgsLen();
 
-  Optional<Object> getAux();
+    Optional<Object> getAux();
 
-  Value interpret(String[] arguments, State state);
+    Value interpret(String[] arguments, State state);
 }
-
