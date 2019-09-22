@@ -1,13 +1,12 @@
 package xyz.eginez.andes;
 
-import java.util.Optional;
+import xyz.eginez.andes.parser.GoSSAParser;
+
 
 public interface Operation {
     String getName();
 
-    int getArgsLen();
+    GoSSAParser.Arguments parseArguments(String[] tokens);
 
-    Optional<Object> getAux();
-
-    Value interpret(String[] arguments, State state);
+    Object execute(GoSSAParser.Arguments arguments, State state);
 }

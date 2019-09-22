@@ -2,7 +2,9 @@ package xyz.eginez.andes;
 
 import xyz.eginez.andes.parser.Instruction;
 
-import static xyz.eginez.andes.Operations.ALL_OPERATIONS;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class Interpreter {
     private final State state;
@@ -11,35 +13,41 @@ public class Interpreter {
         this.state = state;
     }
 
-    public Value interpret(String[] lines) {
+    public void interpret(List<Instruction> instructions) {
         Value v = null;
-        for (int i = 0; i < lines.length; i++) {
-            v = interpretLine(lines[i], state);
-            state.currentValues.put(v.getId(), v);
+        for (int i = 0; i < instructions.size(); i++) {
+            interpretInstruction(instructions.get(i), state);
         }
-        return v;
     }
 
-    public Instruction parse(String line) {
-        return null;
-    }
 
-    public Value interpretLine(String line, State state) {
-        String[] tokens = line.split(" ");
-        assert tokens.length > 2;
-        System.out.println(tokens[1]);
-
-        String id = tokens[0].replace("v", "");
-        String op = tokens[2];
-        assert ALL_OPERATIONS.containsKey(op);
-
-        int argSize = tokens.length - 3;
-        String[] args = new String[argSize];
-        for (int i = 0; i < argSize; i++) {
-            args[i] = tokens[i + 3];
+    public void interpretInstruction(Instruction instruction, State state) {
+        if (instruction instanceof Instruction.ValueInstruction) {
+            Instruction.ValueInstruction valueInstruction = (Instruction.ValueInstruction) instruction;
+            Object valueContent = valueInstruction.getOperation().execute(valueInstruction.getArgs(), state);
+            Value value = new Value(valueInstruction.getId(), valueInstruction.getType(), valueContent);
+            state.currentValues.put(value.getId(), value);
+            return;
         }
 
-        Object value = ALL_OPERATIONS.get(op).interpret(args, state);
-        return new Value(Integer.parseInt(id), "", value);
+        if (instruction instanceof Instruction.Block) {
+            Instruction.Block block = (Instruction.Block) instruction;
+
+        }
+
+
     }
+
+    public static List<Value> getAllValuesFromStateOrError(int[] valueIds, State state) {
+        List<Value> values = new ArrayList<>();
+        for(int id : valueIds) {
+            Optional<Value> value = state.getValue(id);
+            if (!value.isPresent()) {
+                throw new RuntimeException(String.format("Value with id: %d is not present in current state", id));
+            }
+            values.add(value.get());
+        }
+        return values;
+    }
+
 }

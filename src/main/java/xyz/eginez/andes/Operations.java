@@ -1,49 +1,27 @@
 package xyz.eginez.andes;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.BiFunction;
+import xyz.eginez.andes.nodes.ConstString;
+
+import java.util.*;
 
 public class Operations {
     public static Map<String, Operation> ALL_OPERATIONS = new HashMap<>();
 
     static {
-        ALL_OPERATIONS.put("ConstString", new DefaultOperation("ConstString", 0, null, null));
+        ALL_OPERATIONS.put("ConstString", new ConstString());
     }
 
-    public static class DefaultOperation implements Operation {
+    public abstract static class DefaultOperation implements Operation {
         private final String name;
-        private final int argsLen;
-        private final BiFunction<String[], State, Value> interpretClosure;
-        private Object aux;
+        //private final BiFunction<String[], State, Object> interpretClosure;
 
-        public DefaultOperation(
-                String name, int argsLen, Object aux, BiFunction<String[], State, Value> closure) {
+        public DefaultOperation(String name) {
             this.name = name;
-            this.argsLen = argsLen;
-            this.aux = aux;
-            this.interpretClosure = closure;
         }
 
         @Override
         public String getName() {
-            return null;
-        }
-
-        @Override
-        public int getArgsLen() {
-            return 0;
-        }
-
-        @Override
-        public Optional<Object> getAux() {
-            return Optional.ofNullable(aux);
-        }
-
-        @Override
-        public Value interpret(String[] arguments, State state) {
-            return interpretClosure.apply(arguments, state);
+            return name;
         }
     }
 }

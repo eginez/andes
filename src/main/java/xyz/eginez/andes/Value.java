@@ -1,5 +1,7 @@
 package xyz.eginez.andes;
 
+import java.util.Objects;
+
 public class Value {
     private int id;
     private String type;
