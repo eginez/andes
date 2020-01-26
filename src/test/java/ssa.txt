@@ -1,0 +1,23 @@
+b1:
+v1 (?) = InitMem <mem>
+v2 (?) = SP <uintptr>
+v3 (?) = SB <uintptr>
+v4 (?) = LocalAddr <*string> {~r0} v2 v1
+v5 (?) = ConstString <string> {""}
+v6 (?) = ConstString <string> {"Hello"}
+v7 (8) = VarDef <mem> {~r0} v1
+v8 (8) = Store <mem> {string} v4 v6 v7
+Ret v8 (+8)
+
+---
+
+b1:
+v1 (?) = InitMem <mem>
+v2 (?) = SP <uintptr>
+v3 (?) = SB <uintptr>
+v4 (?) = LocalAddr <*string> {~r0} v2 v1
+v5 (?) = ConstString <string> {""}
+v6 (?) = ConstString <string> {"Hello"}
+v7 (8) = VarDef <mem> {~r0} v1
+v8 (8) = Store <mem> {string} v4 v6 v7
+Ret v8 (+8)

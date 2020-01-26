@@ -2,6 +2,9 @@ package xyz.eginez.andes.parser;
 
 import xyz.eginez.andes.Operation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public interface Instruction {
 
     //     kind           control    successors
@@ -15,6 +18,8 @@ public interface Instruction {
     class Block implements Instruction {
 
         private final int id;
+        private String returnValueId;
+        private List<Instruction> instructions = new ArrayList<>();
 
         public Block(int id) {
             this.id = id;
@@ -23,6 +28,18 @@ public interface Instruction {
         public int getId() {
             return id;
         }
+        public String getReturnValueId() {
+            return returnValueId;
+        }
+
+        public void setReturnValueId(String returnValueId) {
+            this.returnValueId = returnValueId;
+        }
+
+        public void addInstruction(Instruction instruction) {
+            instructions.add(instruction);
+        }
+
     }
 
     class ValueInstruction implements Instruction {

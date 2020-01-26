@@ -18,6 +18,7 @@ dependencies {
     //compile "org.antlr:antlr4-runtime:4.7.1"
     compile "org.graalvm.truffle:truffle-api:19.1.1"
     annotationProcessor "org.graalvm.truffle:truffle-dsl-processor:19.1.1"
+    annotationProcessor fileTree(dir:project.buildDir.path + '/libs', include:['*.jar'])
 
 }
 
@@ -29,12 +30,33 @@ test {
     systemProperty 'java.util.logging.config.file', 'src/main/resources/logging.properties'
 }
 
-
 sourceSets {
     main {
         java.srcDirs += ['src/main/generated']
     }
 }
+
+task buildProcessor(type: JavaCompile) {
+    source fileTree('src/main/java/xyz/eginez/andes/annotations')
+    classpath = source
+    destinationDir = file(project.buildDir.path + '/classes/java/main')
+}
+
+task archiveProcessor(type: Jar) {
+    File parentDir = file([project.rootDir.path, "tmp"].join(File.separator))
+    parentDir.mkdir()
+    File f = file(parentDir.path +"/javax.annotation.processing.Processor")
+    f.write("xyz.eginez.andes.annotations.SSAOperationProcessor")
+    from  tasks.buildProcessor.outputs
+    archiveClassifier.set('processor')
+    from(f) {
+        into 'META-INF/services'
+    }
+}
+
+archiveProcessor.dependsOn(buildProcessor)
+compileJava.dependsOn(archiveProcessor)
+
 
 /*
 //generateGrammarSource {

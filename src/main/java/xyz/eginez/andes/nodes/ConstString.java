@@ -1,31 +1,38 @@
 package xyz.eginez.andes.nodes;
 
-import xyz.eginez.andes.Operations;
+import xyz.eginez.andes.Operation;
 import xyz.eginez.andes.State;
+import xyz.eginez.andes.annotations.SSAOperation;
 import xyz.eginez.andes.parser.GoSSAParser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ConstString extends Operations.DefaultOperation {
+@SSAOperation
+public class ConstString extends Operation.DefaultOperation {
     private static Pattern STRING_CONTENT = Pattern.compile("\\{\"(?<val>.*)\"\\}");
     public ConstString() {
         super("ConstString");
     }
 
     @Override
-    public GoSSAParser.Arguments parseArguments(String[] tokens) {
-        Matcher matcher = STRING_CONTENT.matcher(tokens[0]);
-        String valueString = null;
-        if (matcher.matches()) {
-            valueString = matcher.group("val");
-        }
-        return new GoSSAParser.Arguments(null, new Object[]{valueString});
+    public Matcher getArgsMatcher(String tokens) {
+        return STRING_CONTENT.matcher(tokens);
+    }
+
+    @Override
+    public GoSSAParser.Arguments matchArguments(Matcher matcher) {
+        String valueString = matcher.group("val");
+        return new GoSSAParser.Arguments(null, new Object[]{unescape(valueString)});
     }
 
     @Override
     public Object execute(GoSSAParser.Arguments arguments, State state) {
         assert arguments.getAux()[0] != null;
         return arguments.getAux()[0];
+    }
+
+    private String unescape(String escaped) {
+        return escaped.replace("\\", "");
     }
 }
